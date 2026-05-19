@@ -6,9 +6,40 @@ import nextIcon from "./assets/images/play-next.svg";
 // import { getTopTracks } from "./spotifyConfig";
 import { getMyFavAlbum } from "./spotifyConfig";
 
+import {
+  loginSpotify,
+  spotifyApi
+} from "./spotifyAuth";
+
 function App() {
 
   const [myFavAlbum, setMyFavAlbum] = useState<any>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+   const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const token = await spotifyApi.getAccessToken();
+      if (token) setLoggedIn(true);
+    };
+
+    checkLogin();
+  }, []);
+
+  const playPreviousSong = () => {
+    setCurrentIndex((prevIndex) => Math.max(0, prevIndex - 1));
+  }
+
+  const playNextSong = () => {
+    setCurrentIndex((prevIndex) => Math.min(myFavAlbum.tracks.items.length - 1, prevIndex + 1));
+    
+  }
+
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
+    console.log(isPlaying ? "Pausing song" : "Playing song");
+  }
 
   // const [tracks, setTracks] = useState<any[]>([]);
 
@@ -31,11 +62,22 @@ function App() {
     fetchAlbum();
   }, []);
 
-
   return (
     <>
 
     <main>
+
+       {/* {!loggedIn ? (
+        <button onClick={loginSpotify}>
+          Login with Spotify 🎧
+        </button>
+      ) : (
+        <div>
+          <h2>Logged in 🎉</h2>
+          <p>Token received</p>
+        </div>
+      )} */}
+
       <div id="ipod">
         <div id="ipod-screen">
 
@@ -59,21 +101,27 @@ function App() {
                 height={80}
               />
               <p>{myFavAlbum.name}</p>
-              <p>{myFavAlbum.artists.map((artist: any) => artist.name).join(" & ")}</p>
-              <p>{myFavAlbum.tracks.items.map((track:any) => (
-                <p>{track.name}</p>
-              ))}</p>
+              <p>{myFavAlbum.tracks.items[currentIndex]?.name || "No track selected"} by {myFavAlbum.artists.map((artist: any) => artist.name).join(" & ")}</p>
+              <p>{isPlaying ? "Playing" : "Paused"}</p>
+
+              <iframe
+                src={`https://open.spotify.com/embed/track/${myFavAlbum.tracks.items[currentIndex]?.id}`}
+                width="300"
+                height="80"
+                frameBorder="0"
+                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+              />
             </div>
           )}
         </div>
         <div id="ipod-controls">
-            <button className="play-button">
+            <button className="play-button" onClick={togglePlayPause}>
                 <img src={playIcon} alt="Play/Pause" />
             </button>
-            <button className="next-button">
+            <button className="next-button" onClick={playNextSong}>
                 <img src={nextIcon} alt="Next" />
             </button>
-            <button className="prev-button">
+            <button className="prev-button" onClick={playPreviousSong}>
                 <img src={nextIcon} alt="Previous" />
             </button>
         </div>
