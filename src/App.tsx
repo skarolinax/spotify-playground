@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./styles/main.scss";
 
 function App() {
@@ -7,6 +7,13 @@ function App() {
 
   return (
     <>
+
+    <main>
+      <div id="ipod">
+        <div id="ipod-screen"></div>
+        <div id="ipod-controls"></div>
+      </div>
+    </main>
      
     </>
   )
