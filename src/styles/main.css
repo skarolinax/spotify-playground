@@ -6,6 +6,7 @@
 
 body {
   background-color: #D1CECE;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 main {
@@ -41,9 +42,6 @@ main {
   transform: translateX(100%) rotate(var(--shine-deg));
 }
 
-#ipod:hover:after {
-  animation: shine 1s infinite ease-in;
-}
 #ipod-controls {
   position: absolute;
   bottom: -6rem;
@@ -56,6 +54,16 @@ main {
   border-radius: 50%;
   z-index: 2;
 }
+#ipod-controls img {
+  width: 50px;
+  height: 50px;
+}
+#ipod-controls button {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  position: absolute;
+}
 
 #ipod-screen {
   position: absolute;
@@ -64,4 +72,26 @@ main {
   background-color: black;
   border-radius: 20px;
   z-index: 2;
+  color: white;
+  font-weight: 800;
+}
+
+.play-button {
+  top: -66px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+}
+
+.prev-button {
+  top: 50%;
+  left: -66px;
+  transform: translateY(-50%) scaleX(-1);
+}
+
+.next-button {
+  top: 50%;
+  right: -66px;
+  transform: translateY(-50%);
 }/*# sourceMappingURL=main.css.map */
