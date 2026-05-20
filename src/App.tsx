@@ -11,21 +11,34 @@ import {
   spotifyApi
 } from "./spotifyAuth";
 
+//@ts-ignore;
+import Player from "./hooks/player.jsx";
+
 function App() {
 
   const [myFavAlbum, setMyFavAlbum] = useState<any>(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-   const [loggedIn, setLoggedIn] = useState(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(true);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
 
-  useEffect(() => {
-    const checkLogin = async () => {
-      const token = await spotifyApi.getAccessToken();
-      if (token) setLoggedIn(true);
-    };
+    useEffect(() => {
+      const getToken = async () => {
+        const t = await spotifyApi.getAccessToken();
+        if (t) setToken(t.access_token);
+      };
 
-    checkLogin();
-  }, []);
+      getToken();
+    }, []);
+
+  // useEffect(() => {
+  //   const checkLogin = async () => {
+  //     const token = await spotifyApi.getAccessToken();
+  //     if (token) setLoggedIn(true);
+  //   };
+
+  //   checkLogin();
+  // }, []);
 
   const playPreviousSong = () => {
     setCurrentIndex((prevIndex) => Math.max(0, prevIndex - 1));
@@ -33,11 +46,11 @@ function App() {
 
   const playNextSong = () => {
     setCurrentIndex((prevIndex) => Math.min(myFavAlbum.tracks.items.length - 1, prevIndex + 1));
-    
   }
 
   const togglePlayPause = () => {
     setIsPlaying((prev) => !prev);
+    Player.pause;
     console.log(isPlaying ? "Pausing song" : "Playing song");
   }
 
@@ -67,7 +80,7 @@ function App() {
 
     <main>
 
-       {/* {!loggedIn ? (
+       {!loggedIn ? (
         <button onClick={loginSpotify}>
           Login with Spotify 🎧
         </button>
@@ -76,7 +89,7 @@ function App() {
           <h2>Logged in 🎉</h2>
           <p>Token received</p>
         </div>
-      )} */}
+      )}
 
       <div id="ipod">
         <div id="ipod-screen">
@@ -103,14 +116,20 @@ function App() {
               <p>{myFavAlbum.name}</p>
               <p>{myFavAlbum.tracks.items[currentIndex]?.name || "No track selected"} by {myFavAlbum.artists.map((artist: any) => artist.name).join(" & ")}</p>
               <p>{isPlaying ? "Playing" : "Paused"}</p>
+              
+              <Player 
+                myFavAlbum={myFavAlbum}
+                currentIndex={currentIndex}
+                isPlaying={isPlaying}
+                token={token} />
 
-              <iframe
+              {/* <iframe
                 src={`https://open.spotify.com/embed/track/${myFavAlbum.tracks.items[currentIndex]?.id}`}
                 width="300"
                 height="80"
                 frameBorder="0"
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              />
+              /> */}
             </div>
           )}
         </div>
